@@ -31,6 +31,11 @@ void bst_delete(BSTNode **root, const char *word);
 /* In-order traversal: calls callback(node, arg) for each node. */
 void bst_inorder(BSTNode *root, void (*callback)(BSTNode *, void *), void *arg);
 
+/* Pre-order traversal: visits root before left/right subtrees.
+   Used for saving — re-loading in preorder recreates the same tree
+   structure, preventing the sorted-input → skewed-tree performance bug. */
+void bst_preorder(BSTNode *root, void (*callback)(BSTNode *, void *), void *arg);
+
 /* Free all nodes recursively. Sets *root to NULL. */
 void bst_free(BSTNode **root);
 

@@ -170,7 +170,17 @@ int save_custom_words(const char *path, BSTNode *bst_root) {
     fp = fopen(path, "w");
     if (!fp) return -1;
 
-    bst_inorder(bst_root, write_word_cb, fp);
+    /*
+     * Use preorder (not inorder) traversal so the saved file re-creates
+     * the exact same BST structure when re-loaded.  Inorder produces a
+     * sorted (alphabetical) sequence; inserting 90 000 sorted words into
+     * BST and TBT builds fully right-skewed trees of depth 90 000, which
+     * causes O(n^2) TBT construction and stack overflows in all recursive
+     * BST operations on the next startup.  Preorder insertion recreates
+     * the same tree shape as the current session (height ~50), keeping all
+     * operations fast and safe.
+     */
+    bst_preorder(bst_root, write_word_cb, fp);
 
     fclose(fp);
     return 0;

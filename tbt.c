@@ -8,13 +8,30 @@
 
 /* ── Static helpers ──────────────────────────────────────────── */
 
-/* Recursively free only real (non-thread) children, then free node itself.
-   Never follows thread pointers — they point to ancestors, not descendants. */
-static void tbt_free_nodes(TBTNode *node) {
-    if (!node) return;
-    if (!node->lthread) tbt_free_nodes(node->left);
-    if (!node->rthread) tbt_free_nodes(node->right);
-    free(node);
+/*
+ * Iterative free — walks inorder via thread pointers, freeing each data
+ * node before advancing to its successor.  Safe on trees of any depth
+ * (a recursive approach would stack-overflow at ~90 000 nodes on Windows).
+ *
+ * We capture the successor BEFORE freeing the current node so we never
+ * dereference a freed pointer.  Left-thread pointers of later nodes may
+ * dangle after their target is freed, but tbt_inorder_successor never
+ * follows left threads, so those are never accessed.
+ */
+static void tbt_free_nodes(TBTNode *root, TBTNode *header) {
+    TBTNode *cur, *next;
+    if (!root) return;
+
+    /* Walk to the leftmost (smallest) real node */
+    cur = root;
+    while (!cur->lthread) cur = cur->left;
+
+    /* Visit every node in inorder sequence until we reach the header */
+    while (cur != header) {
+        next = tbt_inorder_successor(cur); /* get successor BEFORE free */
+        free(cur);
+        cur = next;
+    }
 }
 
 /* ── Public API ──────────────────────────────────────────────── */
@@ -166,8 +183,9 @@ void tbt_delete(TBTNode *header, const char *word) {
     /* Word not found — nothing changed */
     if (idx == n) { free(arr); return; }
 
-    /* Free all data nodes (recursive helper follows only real children) */
-    tbt_free_nodes(header->lthread ? NULL : header->left);
+    /* Free all data nodes iteratively */
+    if (!header->lthread)
+        tbt_free_nodes(header->left, header);
 
     /* Reset header to empty-tree state */
     header->left    = header;
@@ -184,8 +202,9 @@ void tbt_delete(TBTNode *header, const char *word) {
 void tbt_free(TBTNode **header) {
     if (!header || !*header) return;
 
-    /* Free all data nodes, following only real children */
-    tbt_free_nodes((*header)->lthread ? NULL : (*header)->left);
+    /* Free all data nodes iteratively */
+    if (!(*header)->lthread)
+        tbt_free_nodes((*header)->left, *header);
 
     /* Free the header sentinel */
     free(*header);
