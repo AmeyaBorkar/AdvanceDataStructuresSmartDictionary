@@ -270,39 +270,6 @@ AVL and TBT maintain logarithmic height regardless of insertion order; BST degra
 
 ---
 
-## Team
-
-| Member | Role | Modules |
-|--------|------|---------|
-| **Ameya Borkar** | Lead & Architect | `config.h` · `dictionary.c/h` · `main.c` — system design, core data model, console UI, and full integration |
-| **Aarush Bakshi** | Data & Utilities | `utils.c/h` · `loader.c/h` · `preprocess_jsonl.py` — string helpers, file I/O, multi-format parser, data pipeline |
-| **Arnav Gupta** | BST & Benchmarking | `bst.c/h` · `benchmark.c/h` — unbalanced BST implementation, timed performance comparison suite |
-| **Ayush Agnihotri** | AVL & Autocomplete | `avl.c/h` · `autocomplete.c/h` — self-balancing AVL tree, prefix-search engine, composite ranking |
-| **Aditya Chimurkar** | Threaded Binary Tree | `tbt.c/h` — TBT with Knuth header/sentinel, iterative inorder traversal, thread-pointer management |
-
-### Responsibility breakdown
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  Ameya Borkar — Lead & Architect                                │
-│  config.h  |  dictionary.c/h  |  main.c                        │
-│  (system design, WordRecord model, menu, integration)           │
-├───────────────────────┬─────────────────────────────────────────┤
-│  Aarush Bakshi        │  Arnav Gupta                            │
-│  utils.c/h            │  bst.c/h                                │
-│  loader.c/h           │  benchmark.c/h                          │
-│  preprocess_jsonl.py  │  (BST + perf. analysis)                 │
-│  (data pipeline/I/O)  │                                         │
-├───────────────────────┼─────────────────────────────────────────┤
-│  Ayush Agnihotri      │  Aditya Chimurkar                       │
-│  avl.c/h              │  tbt.c/h                                │
-│  autocomplete.c/h     │  (Threaded BT — most complex structure) │
-│  (AVL + autocomplete) │                                         │
-└───────────────────────┴─────────────────────────────────────────┘
-```
-
----
-
 ## License
 
 This project is released for educational use. The dictionary data (`words.txt`) is derived from the [kaikki.org](https://kaikki.org) dataset, which is based on [Wiktionary](https://www.wiktionary.org/) content licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
